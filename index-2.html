@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>°CRYO On — Marketing Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f4f7f9;--surface:#fff;--surface2:#eef4f7;
+  --border:#dce8ed;--border2:#c8dce5;
+  --cyan:#00b4d8;--cyan-dark:#0096b7;--cyan-pale:#e0f4fa;
+  --navy:#0a2540;--navy2:#1a3a5c;
+  --text:#0a2540;--text2:#4a6580;--text3:#8aa4b8;
+  --green:#00c896;--green-pale:#e6faf5;
+  --red:#e53e3e;--red-pale:#fdecea;
+  --amber:#f59e0b;--amber-pale:#fef3cd;
+  --shadow:0 1px 4px rgba(0,40,80,.07),0 4px 16px rgba(0,40,80,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+.nav-btn{background:none;border:1.5px solid var(--border);color:var(--text2);padding:7px 18px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:500;border-radius:8px;transition:all .18s}
+.nav-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.nav-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.br-btn{background:var(--surface);border:1.5px solid var(--border);color:var(--text2);padding:6px 16px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;border-radius:8px;transition:all .15s}
+.br-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.br-btn.active{background:var(--cyan);color:#fff;border-color:var(--cyan)}
+.inp{background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:10px 14px;font-family:inherit;font-size:14px;width:100%;outline:none;transition:all .15s;border-radius:8px}
+.inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,180,216,.12)}
+.inp::placeholder{color:var(--text3)}
+.inp:disabled{color:var(--cyan-dark);background:var(--cyan-pale);border-color:rgba(0,180,216,.3);cursor:default;font-weight:600}
+select{background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:8px 12px;font-family:inherit;font-size:13px;outline:none;border-radius:8px;cursor:pointer}
+select:focus{border-color:var(--cyan)}
+.save-btn{background:var(--navy);color:#fff;border:none;padding:12px 36px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;border-radius:10px;transition:all .18s;box-shadow:0 4px 12px rgba(10,37,64,.25)}
+.save-btn:hover:not(:disabled){background:var(--navy2);transform:translateY(-1px)}
+.save-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.copy-btn{background:var(--cyan);color:#fff;border:none;padding:12px 28px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;border-radius:10px;transition:all .18s}
+.copy-btn:hover{background:var(--cyan-dark)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+.card-hl{background:linear-gradient(135deg,#e8f8fd,#f0fbfe);border:1.5px solid rgba(0,180,216,.25);border-radius:12px;padding:18px 20px;box-shadow:0 2px 12px rgba(0,180,216,.08)}
+.lbl{font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-bottom:6px}
+.big-num{font-size:24px;font-weight:700;color:var(--text);line-height:1.1;font-family:'DM Mono',monospace}
+.sub-txt{font-size:11px;color:var(--text3);margin-top:4px}
+.prog-track{height:5px;background:var(--border);border-radius:4px;margin-top:10px;overflow:hidden}
+.prog-fill{height:5px;border-radius:4px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.tbl-row{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+.tbl-row:hover td{background:var(--surface2) !important}
+.divider{height:1px;background:var(--border);margin:24px 0}
+.tag-auto{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;letter-spacing:.1em;padding:2px 8px;border-radius:20px;background:var(--cyan-pale);color:var(--cyan-dark);border:1px solid rgba(0,180,216,.25)}
+.section-header{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--cyan-pale);display:flex;align-items:center;gap:8px}
+.section-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+.rag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
+.rag-green{background:var(--green-pale);color:#00a87a;border:1px solid #b3edd9}
+.rag-amber{background:var(--amber-pale);color:#b45309;border:1px solid #fcd97a}
+.rag-red{background:var(--red-pale);color:#c0392b;border:1px solid #f5c0be}
+.ctrl-bar{display:flex;gap:14px;align-items:flex-end;margin-bottom:28px;flex-wrap:wrap;background:var(--surface);padding:16px 20px;border-radius:14px;border:1px solid var(--border);box-shadow:var(--shadow)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const {useState, useEffect, useCallback, useRef} = React;
+
+// ─── REPLACE THIS WITH YOUR APPS SCRIPT /exec URL ───────────────────────────
+const GAS_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+// ─────────────────────────────────────────────────────────────────────────────
+
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const WEEKS  = ["W1","W2","W3","W4","W5"];
+
+// All active ad campaigns — update as new ones launch
+const CAMPAIGNS = [
+  "12 Other",
+  "14.ChatGPT Copy",
+  "17.Mass target",
+  "18.N'Teem",
+  "20.Photo Test",
+  "21.Snow Glow",
+  "26.Re-ads",
+  "27.Pain point",
+  "28.Dynamic",
+  "29.Price hook",
+  "25.Ice Bath",
+  "24.Hyrox",
+  "22.1 On 1",
+  "23.Landing page",
+  "19.Exercise and Sports",
+  "Others / Organic",
+];
+
+const SOCIAL_FIELDS = [
+  {key:"reach_fb",         label:"FB Reach"},
+  {key:"reach_ig",         label:"IG Reach"},
+  {key:"reach_tiktok",     label:"TikTok Reach"},
+  {key:"followers_fb",     label:"FB Accumulated Followers"},
+  {key:"followers_ig",     label:"IG Accumulated Followers"},
+  {key:"followers_tiktok", label:"TikTok Accumulated Followers"},
+  {key:"profile_visits",   label:"Total Profile Visits"},
+];
+
+const pad = n => String(n).padStart(2,"0");
+const makeId = (y,m,w) => "MKT_"+y+"_"+pad(m+1)+"_"+w;
+
+function n(v) { return Number(v)||0; }
+function fmtC(v) { const x=n(v); if(!x&&x!==0)return"—"; return "฿"+x.toLocaleString("en-US",{maximumFractionDigits:0}); }
+function fmtN(v) { const x=n(v); return x.toLocaleString("en-US",{maximumFractionDigits:0}); }
+function fmtPct(v) { return n(v).toFixed(1)+"%"; }
+function pct(a,b) { return n(b)>0?((n(a)/n(b))*100).toFixed(1)+"%":"—"; }
+function ragStatus(actual, target, amber=0.15) {
+  if(!target||target===0) return "none";
+  const p = actual/target;
+  if(p>=1) return "green";
+  if(p>=(1-amber)) return "amber";
+  return "red";
+}
+
+// ─── API (Google Apps Script) ────────────────────────────────────────────────
+async function apiGetAll() {
+  const r = await fetch(GAS_URL);
+  if(!r.ok) throw new Error("GET failed");
+  return r.json();
+}
+async function apiUpsert(data) {
+  await fetch(GAS_URL, {
+    method:"POST",
+    headers:{"Content-Type":"text/plain"},
+    body: JSON.stringify(data),
+  });
+}
+
+// ─── Standalone field components (outside App — no re-mount on state change) ─
+
+function Field({label, fkey, fkStr, defVal, onChange, note}) {
+  return (
+    <div>
+      <div className="lbl">{label}</div>
+      <input
+        key={fkStr+"__"+fkey}
+        type="number" placeholder="0" className="inp"
+        defaultValue={defVal||""}
+        onChange={e => onChange(fkey, e.target.value)}
+      />
+      {note && <div style={{fontSize:10,color:"var(--text3)",marginTop:4}}>{note}</div>}
+    </div>
+  );
+}
+
+function AutoField({label, value, note}) {
+  return (
+    <div>
+      <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:7}}>
+        <div className="lbl" style={{marginBottom:0}}>{label}</div>
+        <span className="tag-auto">AUTO</span>
+      </div>
+      <input className="inp" disabled value={value} readOnly/>
+      {note && <div style={{fontSize:10,color:"var(--text3)",marginTop:4}}>{note}</div>}
+    </div>
+  );
+}
+
+function CampaignRow({campaign, fkStr, defChat, defBook, onChange}) {
+  const rate = n(defChat)>0 ? ((n(defBook)/n(defChat))*100).toFixed(0)+"%" : "—";
+  const r = n(defChat)>0 ? (n(defBook)/n(defChat)>=0.15?"green":n(defBook)/n(defChat)>=0.10?"amber":"red") : "none";
+  const RC = {green:"var(--green)",amber:"var(--amber)",red:"var(--red)",none:"var(--border2)"};
+  return (
+    <div style={{display:"flex",alignItems:"center",gap:10,background:"var(--surface)",
+      border:"1.5px solid var(--border)",padding:"10px 14px",borderRadius:10,marginBottom:6,
+      transition:"border-color .15s"}}
+      onMouseEnter={e=>e.currentTarget.style.borderColor="var(--cyan)"}
+      onMouseLeave={e=>e.currentTarget.style.borderColor="var(--border)"}>
+      <div style={{flex:2,fontSize:12,fontWeight:600,color:"var(--text)"}}>{campaign}</div>
+      <div style={{flex:1}}>
+        <div style={{fontSize:9,color:"var(--text3)",fontWeight:600,marginBottom:3}}>CHATS</div>
+        <input key={fkStr+"__chat__"+campaign} type="number" placeholder="0" className="inp"
+          style={{padding:"7px 10px",fontSize:13,textAlign:"center"}}
+          defaultValue={defChat||""}
+          onChange={e=>onChange("camp__"+campaign+"__chats", e.target.value)}/>
+      </div>
+      <div style={{flex:1}}>
+        <div style={{fontSize:9,color:"var(--text3)",fontWeight:600,marginBottom:3}}>BOOKED</div>
+        <input key={fkStr+"__book__"+campaign} type="number" placeholder="0" className="inp"
+          style={{padding:"7px 10px",fontSize:13,textAlign:"center"}}
+          defaultValue={defBook||""}
+          onChange={e=>onChange("camp__"+campaign+"__booked", e.target.value)}/>
+      </div>
+      <div style={{minWidth:52,textAlign:"center"}}>
+        <div style={{fontSize:9,color:"var(--text3)",fontWeight:600,marginBottom:3}}>RATE</div>
+        <div style={{fontSize:13,fontWeight:700,color:RC[r],fontFamily:"DM Mono,monospace"}}>{rate}</div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main App ────────────────────────────────────────────────────────────────
+
+function App() {
+  const today = new Date();
+  const [view,    setView]    = useState("input");
+  const [year,    setYear]    = useState(today.getFullYear());
+  const [month,   setMonth]   = useState(today.getMonth());
+  const [week,    setWeek]    = useState("W1");
+  const [allRows, setAllRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [saving,  setSaving]  = useState(false);
+  const [saveMsg, setSaveMsg] = useState("");
+  const [copied,  setCopied]  = useState(false);
+  const [calc,    setCalc]    = useState({revTotal:0,cpc:0,cpql:0,cpb:0,cps:0,ctb:0,bts:0,sts:0,cts:0,roas:0});
+  const vals = useRef({});
+  const fkStr = year+"_"+month+"_"+week;
+
+  // ── Recalculate derived metrics whenever inputs change ──
+  function recalc(f) {
+    const spend  = n(f.spend);
+    const chats  = n(f.chats);
+    const qual   = n(f.qualified);
+    const booked = n(f.booked);
+    const shows  = n(f.shows);
+    const sells  = n(f.sells);
+    const revNew = n(f.revenue_new);
+    const revPk  = n(f.revenue_packs);
+    const revTotal = revNew + revPk;
+    setCalc({
+      revTotal,
+      cpc:  chats>0  ? spend/chats  : 0,
+      cpql: qual>0   ? spend/qual   : 0,
+      cpb:  booked>0 ? spend/booked : 0,
+      cps:  sells>0  ? spend/sells  : 0,
+      ctb:  chats>0  ? (booked/chats)*100  : 0,
+      bts:  booked>0 ? (shows/booked)*100  : 0,
+      sts:  shows>0  ? (sells/shows)*100   : 0,
+      cts:  chats>0  ? (sells/chats)*100   : 0,
+      roas: spend>0  ? revTotal/spend       : 0,
+    });
+  }
+
+  function setVal(key, v) {
+    vals.current[key] = v;
+    recalc(vals.current);
+  }
+
+  // ── Load all rows from Google Sheets ──
+  const loadAll = useCallback(async() => {
+    setLoading(true);
+    try {
+      const rows = await apiGetAll();
+      setAllRows(Array.isArray(rows) ? rows : []);
+    } catch(e) { console.error(e); setAllRows([]); }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { loadAll(); }, [loadAll]);
+
+  // ── Populate form when week/month/year changes ──
+  useEffect(() => {
+    const id  = makeId(year, month, week);
+    const row = allRows.find(r => r.id === id);
+    const f   = {};
+    if(row) {
+      ["spend","chats","unqualified","qualified","booked","shows","sells",
+       "revenue_new","revenue_packs"].forEach(k => { f[k] = row[k]||""; });
+      SOCIAL_FIELDS.forEach(({key}) => { f[key] = row[key]||""; });
+      CAMPAIGNS.forEach(c => {
+        f["camp__"+c+"__chats"]  = row["camp__"+c+"__chats"]  || "";
+        f["camp__"+c+"__booked"] = row["camp__"+c+"__booked"] || "";
+      });
+    }
+    vals.current = f;
+    recalc(f);
+  }, [year, month, week, allRows]);
+
+  function getMonthRows(y, m) {
+    return allRows.filter(r =>
+      String(r.year) === String(y) &&
+      String(r.month) === String(m+1) &&
+      String(r.id).startsWith("MKT_")
+    );
+  }
+  function sumW(rows, field) {
+    return rows.reduce((s,r) => s + n(r[field]), 0);
+  }
+
+  // ── Save to Google Sheets ──
+  async function handleSave() {
+    setSaving(true); setSaveMsg("Saving…");
+    try {
+      const f = vals.current;
+      const data = {
+        id:    makeId(year, month, week),
+        year:  String(year),
+        month: String(month+1),
+        week,
+        spend:         f.spend         || 0,
+        chats:         f.chats         || 0,
+        unqualified:   f.unqualified   || 0,
+        qualified:     f.qualified     || 0,
+        booked:        f.booked        || 0,
+        shows:         f.shows         || 0,
+        sells:         f.sells         || 0,
+        revenue_new:   f.revenue_new   || 0,
+        revenue_packs: f.revenue_packs || 0,
+        revenue_total: calc.revTotal,
+        cpc:  calc.cpc.toFixed(2),
+        cpql: calc.cpql.toFixed(2),
+        cpb:  calc.cpb.toFixed(2),
+        cps:  calc.cps.toFixed(2),
+        chat_to_book:  calc.ctb.toFixed(2),
+        book_to_show:  calc.bts.toFixed(2),
+        show_to_sell:  calc.sts.toFixed(2),
+        chat_to_sell:  calc.cts.toFixed(2),
+        roas:          calc.roas.toFixed(3),
+        ...Object.fromEntries(SOCIAL_FIELDS.map(({key}) => [key, f[key]||0])),
+        ...Object.fromEntries(CAMPAIGNS.flatMap(c => [
+          ["camp__"+c+"__chats",  f["camp__"+c+"__chats"]  || 0],
+          ["camp__"+c+"__booked", f["camp__"+c+"__booked"] || 0],
+        ])),
+      };
+      await apiUpsert(data);
+      setAllRows(prev => [...prev.filter(r => r.id !== data.id), data]);
+      setSaveMsg("✓ Saved");
+    } catch(e) { setSaveMsg("✗ Failed — try again"); console.error(e); }
+    setSaving(false);
+    setTimeout(() => setSaveMsg(""), 4000);
+  }
+
+  // ── Build text report for Marc ──
+  function buildReport() {
+    const f      = vals.current;
+    const spend  = n(f.spend);
+    const chats  = n(f.chats);
+    const unq    = n(f.unqualified);
+    const qual   = n(f.qualified);
+    const booked = n(f.booked);
+    const shows  = n(f.shows);
+    const sells  = n(f.sells);
+    const top = CAMPAIGNS
+      .map(c => ({name:c, chats:n(f["camp__"+c+"__chats"]), booked:n(f["camp__"+c+"__booked"])}))
+      .filter(c => c.chats > 0)
+      .sort((a,b) => b.booked - a.booked)
+      .slice(0,6);
+    return `°CRYO On — MARKETING WEEKLY REPORT
+Week ${week} · ${MONTHS[month]} ${year}
+Generated: ${today.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})}
+──────────────────────────────────────
+SPEND & FUNNEL
+──────────────────────────────────────
+Ad Spend:          ${fmtC(spend)}
+Total Chats:       ${fmtN(chats)}
+  Unqualified:     ${fmtN(unq)} (${pct(unq,chats)})
+  Qualified:       ${fmtN(qual)} (${pct(qual,chats)})
+Booked:            ${fmtN(booked)}
+Shows (Arrived):   ${fmtN(shows)}
+Sells (Purchased): ${fmtN(sells)}
+
+──────────────────────────────────────
+CONVERSION RATES
+──────────────────────────────────────
+Chat → Booked:     ${calc.ctb.toFixed(1)}%
+Booked → Show:     ${calc.bts.toFixed(1)}%
+Show → Sell:       ${calc.sts.toFixed(1)}%
+Chat → Sell:       ${calc.cts.toFixed(1)}%  ← overall efficiency
+
+──────────────────────────────────────
+COST METRICS
+──────────────────────────────────────
+Cost per Chat:     ${fmtC(calc.cpc)}
+Cost per QL:       ${fmtC(calc.cpql)}
+Cost per Booking:  ${fmtC(calc.cpb)}
+Cost per Sell:     ${fmtC(calc.cps)}
+
+──────────────────────────────────────
+REVENUE
+──────────────────────────────────────
+New Single Rev:    ${fmtC(n(f.revenue_new))}
+Pack / Member Rev: ${fmtC(n(f.revenue_packs))}
+Total New Rev:     ${fmtC(calc.revTotal)}
+ROAS:              ${calc.roas.toFixed(2)}x
+
+──────────────────────────────────────
+TOP CAMPAIGNS (by bookings)
+──────────────────────────────────────
+${top.length > 0
+  ? top.map(c => `${c.name.slice(0,24).padEnd(25)} Chats:${String(c.chats).padStart(4)}  Booked:${String(c.booked).padStart(3)}  Rate:${pct(c.booked,c.chats)}`).join("\n")
+  : "No campaign data entered this week"
+}
+──────────────────────────────────────`;
+  }
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(buildReport());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch { alert("Copy failed — select text manually"); }
+  }
+
+  // ── Current row indicator ──
+  const curRow = allRows.find(r => r.id === makeId(year, month, week));
+  const monthRows = getMonthRows(year, month);
+
+  // ────────────────────────────────────────────────────────────────────────────
+  return (
+    <div>
+
+      {/* ── HEADER ── */}
+      <div style={{background:"var(--surface)",borderBottom:"1px solid var(--border)",
+        padding:"0 24px",display:"flex",alignItems:"center",justifyContent:"space-between",
+        height:58,position:"sticky",top:0,zIndex:200,boxShadow:"0 2px 12px rgba(0,40,80,.06)"}}>
+        <div style={{display:"flex",alignItems:"center",gap:16}}>
+          <div>
+            <span style={{fontSize:20,fontWeight:800,letterSpacing:"-.02em",color:"var(--navy)"}}>°CRYO</span>
+            <span style={{fontSize:20,fontWeight:300,color:"var(--cyan)"}}> On</span>
+            <span style={{fontSize:10,color:"var(--text3)",marginLeft:10,letterSpacing:".12em",fontWeight:600}}>MARKETING TRACKER</span>
+          </div>
+          {loading && (
+            <div style={{display:"flex",alignItems:"center",gap:6}}>
+              <div style={{width:6,height:6,borderRadius:"50%",background:"var(--cyan)",animation:"pulse 1s infinite"}}/>
+              <span style={{fontSize:11,color:"var(--text3)"}}>Syncing…</span>
+            </div>
+          )}
+        </div>
+        <div style={{display:"flex",gap:5}}>
+          {[["input","Weekly Input"],["dashboard","Dashboard"],["campaigns","Campaigns"],["log","Monthly Log"]].map(([v,l]) => (
+            <button key={v} className={"nav-btn"+(view===v?" active":"")} onClick={() => setView(v)}>{l}</button>
+          ))}
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          {saveMsg && (
+            <span style={{fontSize:12,fontWeight:600,
+              color:saveMsg.startsWith("✓")?"var(--green)":saveMsg.startsWith("✗")?"var(--red)":"var(--text3)"}}>
+              {saveMsg}
+            </span>
+          )}
+          <div style={{fontSize:12,color:"var(--text3)",fontWeight:500}}>
+            {MONTHS[today.getMonth()].slice(0,3)} {today.getDate()}, {today.getFullYear()}
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          WEEKLY INPUT
+      ══════════════════════════════════════════════════════════════════════ */}
+      {view==="input" && (
+        <div style={{maxWidth:900,margin:"0 auto",padding:"32px 24px"}}>
+
+          {/* Period selector */}
+          <div className="ctrl-bar">
+            <div>
+              <div className="lbl">Month</div>
+              <select value={month} onChange={e => setMonth(Number(e.target.value))}>
+                {MONTHS.map((m,i) => <option key={i} value={i}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <div className="lbl">Week</div>
+              <div style={{display:"flex",gap:6}}>
+                {WEEKS.map(w => (
+                  <button key={w} className={"br-btn"+(week===w?" active":"")} onClick={() => setWeek(w)}>{w}</button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="lbl">Year</div>
+              <select value={year} onChange={e => setYear(Number(e.target.value))}>
+                {[2025,2026,2027].map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            <div style={{marginLeft:"auto",background:curRow?"var(--green-pale)":"var(--amber-pale)",
+              border:"1px solid "+(curRow?"#b3edd9":"#fcd97a"),borderRadius:8,padding:"6px 14px",
+              fontSize:11,color:curRow?"#00a87a":"#b45309",fontWeight:700}}>
+              {curRow ? "✓ Data saved for this week" : "No data yet — fill in and save"}
+            </div>
+          </div>
+
+          {/* Week label */}
+          <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:24}}>
+            <div style={{background:"var(--navy)",color:"#fff",borderRadius:10,padding:"8px 18px",fontWeight:800,fontSize:18}}>{week}</div>
+            <div>
+              <div style={{fontWeight:700,fontSize:16,color:"var(--navy)"}}>{MONTHS[month]} {year}</div>
+              <div style={{fontSize:12,color:"var(--text3)"}}>BB fills this in twice per week · Marc reviews the report</div>
+            </div>
+          </div>
+
+          {/* ── AD SPEND ── */}
+          <div className="section-header"><span className="section-dot"/>Ad Spend</div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 2fr",gap:12,marginBottom:28}}>
+            <Field label="Total Ad Spend (THB)" fkey="spend" fkStr={fkStr}
+              defVal={vals.current.spend} onChange={setVal}
+              note="All paid channels combined — Meta + TikTok"/>
+          </div>
+
+          <div className="divider"/>
+
+          {/* ── FUNNEL ── */}
+          <div className="section-header"><span className="section-dot"/>Funnel — Conversations to Revenue</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:12}}>
+            <Field label="Total Chats / Conversations" fkey="chats" fkStr={fkStr}
+              defVal={vals.current.chats} onChange={setVal}
+              note="All Messenger + DM conversations opened"/>
+            <Field label="Unqualified Leads" fkey="unqualified" fkStr={fkStr}
+              defVal={vals.current.unqualified} onChange={setVal}
+              note="Spam, wrong market, ghosted immediately"/>
+            <Field label="Qualified Leads" fkey="qualified" fkStr={fkStr}
+              defVal={vals.current.qualified} onChange={setVal}
+              note="Showed genuine interest, engaged with price or location"/>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}}>
+            <Field label="Booked Appointments" fkey="booked" fkStr={fkStr}
+              defVal={vals.current.booked} onChange={setVal}
+              note="Confirmed slot — paid or committed"/>
+            <Field label="Shows (Arrived)" fkey="shows" fkStr={fkStr}
+              defVal={vals.current.shows} onChange={setVal}
+              note="Actually walked in"/>
+            <Field label="Sells (Purchased)" fkey="sells" fkStr={fkStr}
+              defVal={vals.current.sells} onChange={setVal}
+              note="Completed purchase — single or pack"/>
+          </div>
+
+          {/* Auto conversion rates */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:28}}>
+            {[
+              {label:"Chat → Booked",  val:calc.ctb.toFixed(1)+"%", note:"Target >15%",  good:calc.ctb>=15, ok:calc.ctb>=10},
+              {label:"Booked → Show",  val:calc.bts.toFixed(1)+"%", note:"Target >70%",  good:calc.bts>=70, ok:calc.bts>=60},
+              {label:"Show → Sell",    val:calc.sts.toFixed(1)+"%", note:"Target >50%",  good:calc.sts>=50, ok:calc.sts>=40},
+              {label:"Chat → Sell",    val:calc.cts.toFixed(1)+"%", note:"Overall efficiency", good:calc.cts>=8, ok:calc.cts>=5},
+            ].map(({label,val,note,good,ok}) => {
+              const col = good?"var(--green)":ok?"var(--amber)":"var(--red)";
+              return (
+                <div key={label} className="card-hl" style={{padding:"12px 14px"}}>
+                  <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:6}}>
+                    <div className="lbl" style={{marginBottom:0}}>{label}</div>
+                    <span className="tag-auto">AUTO</span>
+                  </div>
+                  <div style={{fontSize:22,fontWeight:700,color:col,fontFamily:"DM Mono,monospace"}}>{val}</div>
+                  <div style={{fontSize:10,color:"var(--text3)",marginTop:3}}>{note}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="divider"/>
+
+          {/* ── REVENUE ── */}
+          <div className="section-header"><span className="section-dot"/>Revenue from New Clients This Week</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:12}}>
+            <Field label="New Client Single Revenue (THB)" fkey="revenue_new" fkStr={fkStr}
+              defVal={vals.current.revenue_new} onChange={setVal}
+              note="Singles purchased by first-time clients"/>
+            <Field label="Pack / Member Revenue (THB)" fkey="revenue_packs" fkStr={fkStr}
+              defVal={vals.current.revenue_packs} onChange={setVal}
+              note="Packs and memberships from new clients"/>
+            <AutoField label="Total New Revenue" value={fmtC(calc.revTotal)} note="Single + pack combined"/>
+          </div>
+
+          {/* Cost metrics + ROAS */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:12}}>
+            {[
+              {label:"Cost per Chat",    val:fmtC(calc.cpc),  note:"Spend ÷ Chats"},
+              {label:"Cost per QL",      val:fmtC(calc.cpql), note:"Spend ÷ Qualified"},
+              {label:"Cost per Booking", val:fmtC(calc.cpb),  note:"Spend ÷ Booked"},
+              {label:"Cost per Sell",    val:fmtC(calc.cps),  note:"Spend ÷ Sells"},
+            ].map(({label,val,note}) => (
+              <div key={label} className="card" style={{padding:"12px 14px"}}>
+                <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:6}}>
+                  <div className="lbl" style={{marginBottom:0}}>{label}</div>
+                  <span className="tag-auto">AUTO</span>
+                </div>
+                <div style={{fontSize:18,fontWeight:700,color:"var(--navy)",fontFamily:"DM Mono,monospace"}}>{val}</div>
+                <div style={{fontSize:10,color:"var(--text3)",marginTop:3}}>{note}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:28}}>
+            <div className="card-hl" style={{borderLeft:"4px solid var(--cyan)"}}>
+              <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:8}}>
+                <div className="lbl" style={{marginBottom:0}}>ROAS (Return on Ad Spend)</div>
+                <span className="tag-auto">AUTO</span>
+              </div>
+              <div style={{fontSize:32,fontWeight:700,fontFamily:"DM Mono,monospace",
+                color:calc.roas>=3?"var(--green)":calc.roas>=2?"var(--amber)":calc.roas>=1?"var(--text2)":"var(--red)"}}>
+                {calc.roas.toFixed(2)}x
+              </div>
+              <div style={{fontSize:11,color:"var(--text3)",marginTop:6}}>
+                {calc.roas>=3?"🟢 Strong — above 3x":calc.roas>=2?"🟡 Good — 2–3x":calc.roas>=1?"🟠 Marginal — 1–2x":"🔴 Below break-even"}
+              </div>
+              <div style={{fontSize:10,color:"var(--text3)",marginTop:4}}>
+                {fmtC(calc.revTotal)} revenue ÷ {fmtC(n(vals.current.spend))} spend
+              </div>
+            </div>
+            <div className="card">
+              <div className="lbl">Revenue per Sell</div>
+              <div style={{fontSize:28,fontWeight:700,color:"var(--text)",fontFamily:"DM Mono,monospace"}}>
+                {n(vals.current.sells)>0 ? fmtC(calc.revTotal / n(vals.current.sells)) : "—"}
+              </div>
+              <div style={{fontSize:11,color:"var(--text3)",marginTop:6}}>Avg ticket value this week</div>
+            </div>
+          </div>
+
+          <div className="divider"/>
+
+          {/* ── SOCIAL MEDIA ── */}
+          <div className="section-header"><span className="section-dot"/>Social Media</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:28}}>
+            {SOCIAL_FIELDS.map(({key,label}) => (
+              <Field key={key} label={label} fkey={key} fkStr={fkStr}
+                defVal={vals.current[key]} onChange={setVal}/>
+            ))}
+          </div>
+
+          <div className="divider"/>
+
+          {/* ── CAMPAIGN BREAKDOWN ── */}
+          <div className="section-header"><span className="section-dot"/>Campaign Breakdown — Chats & Bookings per Ad</div>
+          <div style={{fontSize:11,color:"var(--text3)",marginBottom:14}}>
+            Enter chats and bookings for each campaign active this week. Leave inactive ones blank.
+          </div>
+          {CAMPAIGNS.map(c => (
+            <CampaignRow key={c} campaign={c} fkStr={fkStr}
+              defChat={n(vals.current["camp__"+c+"__chats"])}
+              defBook={n(vals.current["camp__"+c+"__booked"])}
+              onChange={setVal}/>
+          ))}
+
+          {/* ── SAVE + COPY ── */}
+          <div style={{marginTop:32,display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+            <button className="save-btn" onClick={handleSave} disabled={saving}>
+              {saving ? "Saving…" : "Save Week"}
+            </button>
+            <button className="copy-btn" onClick={handleCopy}>
+              {copied ? "✓ Copied!" : "Copy Report for Marc"}
+            </button>
+            <span style={{fontSize:11,color:"var(--text3)"}}>
+              Save → Google Sheets · Copy → paste into Claude for review
+            </span>
+          </div>
+
+          {/* Report preview after copy */}
+          {copied && (
+            <div style={{marginTop:24,background:"var(--navy)",borderRadius:12,padding:"20px 24px"}}>
+              <div style={{fontSize:11,fontWeight:700,color:"var(--cyan)",marginBottom:12,letterSpacing:".1em"}}>REPORT COPIED — PASTE INTO CLAUDE</div>
+              <pre style={{fontSize:11,color:"rgba(255,255,255,.8)",fontFamily:"DM Mono,monospace",whiteSpace:"pre-wrap",lineHeight:1.7}}>
+                {buildReport()}
+              </pre>
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          DASHBOARD
+      ══════════════════════════════════════════════════════════════════════ */}
+      {view==="dashboard" && (
+        <div style={{maxWidth:1100,margin:"0 auto",padding:"32px 24px"}}>
+          <div className="ctrl-bar">
+            <div>
+              <div className="lbl">Month</div>
+              <select value={month} onChange={e => setMonth(Number(e.target.value))}>
+                {MONTHS.map((m,i) => <option key={i} value={i}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <div className="lbl">Year</div>
+              <select value={year} onChange={e => setYear(Number(e.target.value))}>
+                {[2025,2026,2027].map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            <div style={{marginLeft:"auto",fontSize:11,color:"var(--text3)",fontWeight:600}}>
+              {monthRows.length} week(s) of data · {MONTHS[month]} {year}
+            </div>
+          </div>
+
+          {(()=>{
+            const spend  = sumW(monthRows,"spend");
+            const chats  = sumW(monthRows,"chats");
+            const unq    = sumW(monthRows,"unqualified");
+            const qual   = sumW(monthRows,"qualified");
+            const booked = sumW(monthRows,"booked");
+            const shows  = sumW(monthRows,"shows");
+            const sells  = sumW(monthRows,"sells");
+            const revNew = sumW(monthRows,"revenue_new");
+            const revPk  = sumW(monthRows,"revenue_packs");
+            const revTot = sumW(monthRows,"revenue_total");
+            const ctb    = chats>0  ? (booked/chats)*100  : 0;
+            const bts    = booked>0 ? (shows/booked)*100  : 0;
+            const sts    = shows>0  ? (sells/shows)*100   : 0;
+            const cts    = chats>0  ? (sells/chats)*100   : 0;
+            const roas   = spend>0  ? revTot/spend         : 0;
+            const C = {green:"var(--green)",amber:"var(--amber)",red:"var(--red)",none:"var(--border2)"};
+
+            return (
+              <div>
+
+                {/* Funnel cards */}
+                <div className="section-header"><span className="section-dot"/>Funnel — Month to Date</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:28}}>
+                  {[
+                    {label:"Ad Spend",       val:spend,  type:"currency", hl:true},
+                    {label:"Total Chats",    val:chats,  type:"number"},
+                    {label:"Qualified Leads",val:qual,   type:"number"},
+                    {label:"Booked",         val:booked, type:"number"},
+                    {label:"Shows",          val:shows,  type:"number"},
+                    {label:"Sells",          val:sells,  type:"number"},
+                  ].map(({label,val,type,hl}) => (
+                    <div key={label} className={hl?"card-hl":"card"}>
+                      <div className="lbl">{label}</div>
+                      <div className="big-num" style={{color:hl?"var(--cyan-dark)":"var(--text)"}}>{type==="currency"?fmtC(val):fmtN(val)}</div>
+                      {label==="Total Chats"&&chats>0&&<div className="sub-txt">{fmtN(unq)} unqualified · {pct(qual,chats)} qualified</div>}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Conversion rates with RAG */}
+                <div className="section-header"><span className="section-dot"/>Conversion Rates — Month to Date</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:28}}>
+                  {[
+                    {label:"Chat → Booked", val:ctb, bench:15, note:"Target >15%", fmt:v=>v.toFixed(1)+"%"},
+                    {label:"Booked → Show", val:bts, bench:70, note:"Target >70%", fmt:v=>v.toFixed(1)+"%"},
+                    {label:"Show → Sell",   val:sts, bench:50, note:"Target >50%", fmt:v=>v.toFixed(1)+"%"},
+                    {label:"ROAS",          val:roas,bench:2,  note:"Target >2x",  fmt:v=>v.toFixed(2)+"x"},
+                  ].map(({label,val,bench,note,fmt}) => {
+                    const r = ragStatus(val,bench);
+                    return (
+                      <div key={label} className="card" style={{borderLeft:"4px solid "+(r!=="none"?C[r]:"var(--border)")}}>
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
+                          <div className="lbl" style={{marginBottom:0}}>{label}</div>
+                          {r!=="none"&&<span className={"rag rag-"+r}>{r==="green"?"🟢":r==="amber"?"🟡":"🔴"}</span>}
+                        </div>
+                        <div className="big-num" style={{color:r!=="none"?C[r]:"var(--text)"}}>{fmt(val)}</div>
+                        <div className="sub-txt">{note}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Cost metrics */}
+                <div className="section-header"><span className="section-dot"/>Cost Metrics — Month to Date</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:28}}>
+                  {[
+                    {label:"Cost per Chat",    val:chats>0?spend/chats:0},
+                    {label:"Cost per QL",      val:qual>0?spend/qual:0},
+                    {label:"Cost per Booking", val:booked>0?spend/booked:0},
+                    {label:"Cost per Sell",    val:sells>0?spend/sells:0},
+                  ].map(({label,val}) => (
+                    <div key={label} className="card">
+                      <div className="lbl">{label}</div>
+                      <div className="big-num">{fmtC(val)}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Revenue */}
+                <div className="section-header"><span className="section-dot"/>Revenue — Month to Date</div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:28}}>
+                  <div className="card-hl">
+                    <div className="lbl">New Single Revenue</div>
+                    <div className="big-num" style={{color:"var(--cyan-dark)"}}>{fmtC(revNew)}</div>
+                  </div>
+                  <div className="card">
+                    <div className="lbl">Pack / Member Revenue</div>
+                    <div className="big-num">{fmtC(revPk)}</div>
+                  </div>
+                  <div className="card-hl" style={{borderLeft:"4px solid var(--green)"}}>
+                    <div className="lbl">Total New Revenue</div>
+                    <div className="big-num" style={{color:"var(--green)"}}>{fmtC(revTot)}</div>
+                    <div className="sub-txt">ROAS: {roas.toFixed(2)}x · Rev/Sell: {sells>0?fmtC(revTot/sells):"—"}</div>
+                  </div>
+                </div>
+
+                {/* Week-by-week table */}
+                {monthRows.length > 0 && (
+                  <div>
+                    <div className="section-header"><span className="section-dot"/>Week-by-Week</div>
+                    <div style={{background:"var(--surface)",borderRadius:14,border:"1px solid var(--border)",boxShadow:"var(--shadow)",overflow:"hidden"}}>
+                      <div style={{overflowX:"auto"}}>
+                        <table style={{borderCollapse:"collapse",width:"100%",fontSize:12}}>
+                          <thead>
+                            <tr>
+                              {["Week","Spend","Chats","QL","Booked","Shows","Sells","Chat→Book","ROAS","Revenue"].map(h => (
+                                <th key={h} style={{padding:"10px 14px",textAlign:h==="Week"?"left":"right",
+                                  color:"var(--text3)",fontSize:10,fontWeight:600,letterSpacing:".08em",
+                                  borderBottom:"2px solid var(--border)",whiteSpace:"nowrap",background:"var(--surface)"}}>{h}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {[...monthRows].sort((a,b)=>a.week>b.week?1:-1).map(row => {
+                              const rc = n(row.chats)>0?((n(row.booked)/n(row.chats))*100).toFixed(1)+"%":"—";
+                              const ro = n(row.spend)>0?(n(row.revenue_total)/n(row.spend)).toFixed(2)+"x":"—";
+                              const roN = n(row.spend)>0?n(row.revenue_total)/n(row.spend):0;
+                              const tdS = {padding:"10px 14px",textAlign:"right",fontSize:12,color:"var(--text2)",borderBottom:"1px solid var(--border)"};
+                              return (
+                                <tr key={row.id} className="tbl-row" onClick={()=>{setWeek(row.week);setView("input");}}>
+                                  <td style={{...tdS,textAlign:"left",fontWeight:700,color:"var(--navy)"}}>{row.week}</td>
+                                  <td style={tdS}>{fmtC(row.spend)}</td>
+                                  <td style={tdS}>{fmtN(row.chats)}</td>
+                                  <td style={tdS}>{fmtN(row.qualified)}</td>
+                                  <td style={tdS}>{fmtN(row.booked)}</td>
+                                  <td style={tdS}>{fmtN(row.shows)}</td>
+                                  <td style={tdS}>{fmtN(row.sells)}</td>
+                                  <td style={tdS}>{rc}</td>
+                                  <td style={{...tdS,fontWeight:700,color:roN>=2?"var(--green)":roN>=1?"var(--amber)":"var(--red)"}}>{ro}</td>
+                                  <td style={{...tdS,fontWeight:700}}>{fmtC(row.revenue_total)}</td>
+                                </tr>
+                              );
+                            })}
+                            <tr style={{background:"var(--navy)"}}>
+                              {[
+                                {v:"MTD",  left:true},
+                                {v:fmtC(spend)},  {v:fmtN(chats)}, {v:fmtN(qual)},
+                                {v:fmtN(booked)}, {v:fmtN(shows)}, {v:fmtN(sells)},
+                                {v:ctb.toFixed(1)+"%"}, {v:roas.toFixed(2)+"x"}, {v:fmtC(revTot)},
+                              ].map((cell,i) => (
+                                <td key={i} style={{padding:"12px 14px",textAlign:cell.left?"left":"right",
+                                  color:"#fff",fontWeight:700,fontSize:12,
+                                  ...(cell.left?{letterSpacing:".1em"}:{})}}>{cell.v}</td>
+                              ))}
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div style={{padding:"10px 16px",fontSize:11,color:"var(--text3)",borderTop:"1px solid var(--border)"}}>
+                        Click any row to edit that week
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          CAMPAIGNS
+      ══════════════════════════════════════════════════════════════════════ */}
+      {view==="campaigns" && (
+        <div style={{maxWidth:1000,margin:"0 auto",padding:"32px 24px"}}>
+          <div className="ctrl-bar">
+            <div>
+              <div className="lbl">Month</div>
+              <select value={month} onChange={e => setMonth(Number(e.target.value))}>
+                {MONTHS.map((m,i) => <option key={i} value={i}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <div className="lbl">Year</div>
+              <select value={year} onChange={e => setYear(Number(e.target.value))}>
+                {[2025,2026,2027].map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            <div style={{marginLeft:"auto",fontSize:11,color:"var(--text3)",fontWeight:600}}>
+              Ranked by total bookings · {MONTHS[month]} {year}
+            </div>
+          </div>
+
+          <div className="section-header"><span className="section-dot"/>Campaign Leaderboard</div>
+
+          {(()=>{
+            const rows = getMonthRows(year, month);
+            const data = CAMPAIGNS.map(c => ({
+              name:   c,
+              chats:  rows.reduce((s,r) => s + n(r["camp__"+c+"__chats"]),  0),
+              booked: rows.reduce((s,r) => s + n(r["camp__"+c+"__booked"]), 0),
+            })).filter(c => c.chats > 0).sort((a,b) => b.booked - a.booked);
+
+            if(data.length === 0) return (
+              <div className="card" style={{textAlign:"center",padding:"40px",color:"var(--text3)"}}>
+                No campaign data for {MONTHS[month]} {year}. Enter data in Weekly Input.
+              </div>
+            );
+
+            const maxBook = Math.max(...data.map(c=>c.booked), 1);
+            const thS = {padding:"10px 14px",color:"var(--text3)",fontSize:10,fontWeight:600,
+              letterSpacing:".08em",borderBottom:"2px solid var(--border)",background:"var(--surface)"};
+            return (
+              <div style={{background:"var(--surface)",borderRadius:14,border:"1px solid var(--border)",boxShadow:"var(--shadow)",overflow:"hidden"}}>
+                <table style={{borderCollapse:"collapse",width:"100%",fontSize:13}}>
+                  <thead>
+                    <tr>
+                      <th style={{...thS,textAlign:"left",width:32}}>#</th>
+                      <th style={{...thS,textAlign:"left"}}>Campaign</th>
+                      <th style={{...thS,textAlign:"right"}}>Chats</th>
+                      <th style={{...thS,textAlign:"right"}}>Booked</th>
+                      <th style={{...thS,textAlign:"right"}}>Book Rate</th>
+                      <th style={{...thS,textAlign:"left",minWidth:160}}>Performance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.map((c,i) => {
+                      const rate = c.chats>0?(c.booked/c.chats)*100:0;
+                      const r    = rate>=15?"green":rate>=10?"amber":"red";
+                      const C    = {green:"var(--green)",amber:"var(--amber)",red:"var(--red)"};
+                      const barW = c.booked>0?(c.booked/maxBook)*100:0;
+                      const tdS  = {padding:"10px 14px",textAlign:"right",fontSize:12,color:"var(--text2)",borderBottom:"1px solid var(--border)"};
+                      return (
+                        <tr key={c.name} className="tbl-row">
+                          <td style={{...tdS,textAlign:"left",fontWeight:700,color:"var(--text3)"}}>{i+1}</td>
+                          <td style={{...tdS,textAlign:"left",fontWeight:600,color:"var(--navy)"}}>{c.name}</td>
+                          <td style={tdS}>{fmtN(c.chats)}</td>
+                          <td style={{...tdS,fontWeight:700,color:"var(--text)"}}>{fmtN(c.booked)}</td>
+                          <td style={tdS}>
+                            <span className={"rag rag-"+r}>{rate.toFixed(1)}%</span>
+                          </td>
+                          <td style={{...tdS,textAlign:"left"}}>
+                            <div style={{height:8,background:"var(--border)",borderRadius:4,overflow:"hidden",maxWidth:140}}>
+                              <div style={{height:8,width:barW+"%",background:C[r],borderRadius:4,transition:"width .4s"}}/>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <div style={{padding:"12px 16px",fontSize:11,color:"var(--text3)",borderTop:"1px solid var(--border)",display:"flex",gap:16}}>
+                  <span>🟢 Book rate ≥15%</span><span>🟡 10–15%</span><span>🔴 &lt;10%</span>
+                  <span style={{marginLeft:"auto"}}>Total: {data.length} campaigns with data</span>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          MONTHLY LOG
+      ══════════════════════════════════════════════════════════════════════ */}
+      {view==="log" && (
+        <div style={{maxWidth:1100,margin:"0 auto",padding:"32px 24px"}}>
+          <div className="ctrl-bar">
+            <div>
+              <div className="lbl">Month</div>
+              <select value={month} onChange={e => setMonth(Number(e.target.value))}>
+                {MONTHS.map((m,i) => <option key={i} value={i}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <div className="lbl">Year</div>
+              <select value={year} onChange={e => setYear(Number(e.target.value))}>
+                {[2025,2026,2027].map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {(()=>{
+            const rows = [...getMonthRows(year,month)].sort((a,b)=>a.week>b.week?1:-1);
+            if(rows.length===0) return (
+              <div className="card" style={{textAlign:"center",padding:"40px",color:"var(--text3)"}}>
+                No data for {MONTHS[month]} {year}.
+              </div>
+            );
+            const cols = [
+              {key:"spend",         label:"Spend",     fmtFn:fmtC},
+              {key:"chats",         label:"Chats",     fmtFn:fmtN},
+              {key:"unqualified",   label:"Unqual.",   fmtFn:fmtN},
+              {key:"qualified",     label:"Qualified", fmtFn:fmtN},
+              {key:"booked",        label:"Booked",    fmtFn:fmtN},
+              {key:"shows",         label:"Shows",     fmtFn:fmtN},
+              {key:"sells",         label:"Sells",     fmtFn:fmtN},
+              {key:"revenue_new",   label:"Rev Single",fmtFn:fmtC},
+              {key:"revenue_packs", label:"Rev Packs", fmtFn:fmtC},
+              {key:"revenue_total", label:"Rev Total", fmtFn:fmtC},
+              {key:"roas",          label:"ROAS",      fmtFn:v=>n(v).toFixed(2)+"x"},
+            ];
+            const thS = {padding:"10px 14px",textAlign:"right",color:"var(--text3)",fontSize:10,fontWeight:600,letterSpacing:".08em",borderBottom:"2px solid var(--border)",whiteSpace:"nowrap",background:"var(--surface)"};
+            return (
+              <div style={{background:"var(--surface)",borderRadius:14,border:"1px solid var(--border)",boxShadow:"var(--shadow)",overflow:"hidden"}}>
+                <div style={{overflowX:"auto"}}>
+                  <table style={{borderCollapse:"collapse",width:"100%",fontSize:12}}>
+                    <thead>
+                      <tr>
+                        <th style={{...thS,textAlign:"left"}}>Week</th>
+                        {cols.map(c=><th key={c.key} style={thS}>{c.label}</th>)}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map(row => {
+                        const tdS = {padding:"10px 14px",textAlign:"right",fontSize:12,color:"var(--text2)",borderBottom:"1px solid var(--border)"};
+                        return (
+                          <tr key={row.id} className="tbl-row" onClick={()=>{setWeek(row.week);setView("input");}}>
+                            <td style={{...tdS,textAlign:"left",fontWeight:700,color:"var(--navy)"}}>{row.week}</td>
+                            {cols.map(c=><td key={c.key} style={tdS}>{c.fmtFn(row[c.key])}</td>)}
+                          </tr>
+                        );
+                      })}
+                      <tr style={{background:"var(--navy)"}}>
+                        <td style={{padding:"12px 14px",color:"#fff",fontSize:11,fontWeight:700,letterSpacing:".1em"}}>TOTAL</td>
+                        {cols.map(c=>{
+                          const tot = rows.reduce((s,r)=>s+n(r[c.key]),0);
+                          return <td key={c.key} style={{padding:"12px 14px",textAlign:"right",color:"#fff",fontWeight:700,fontSize:12}}>{c.key==="roas"?(sumW(rows,"spend")>0?(sumW(rows,"revenue_total")/sumW(rows,"spend")).toFixed(2)+"x":"—"):c.fmtFn(tot)}</td>;
+                        })}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div style={{padding:"10px 16px",fontSize:11,color:"var(--text3)",borderTop:"1px solid var(--border)"}}>
+                  Click any row to edit · All weeks for {MONTHS[month]} {year}
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
